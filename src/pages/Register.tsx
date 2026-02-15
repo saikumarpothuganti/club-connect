@@ -31,20 +31,50 @@ const Register: React.FC = () => {
       toast({ title: "Passwords don't match", variant: "destructive" });
       return;
     }
+    if (!clubId) {
+      toast({ title: "Please select a club", variant: "destructive" });
+      return;
+    }
+
     setLoading(true);
     try {
+      // Check for duplicate college_id or email
+      const { data: existingProfiles } = await supabase
+        .from("profiles")
+        .select("college_id, email")
+        .or(`college_id.eq.${collegeId},email.eq.${email}`);
+
+      if (existingProfiles && existingProfiles.length > 0) {
+        toast({
+          title: "Account already exists",
+          description: "An account with this College ID or Email already exists.",
+          variant: "destructive",
+        });
+        setLoading(false);
+        return;
+      }
+
+      // Check WebAuthn support
+      if (!window.PublicKeyCredential) {
+        toast({
+          title: "Fingerprint sensor required",
+          description: "Your device does not support biometric authentication. Registration blocked.",
+          variant: "destructive",
+        });
+        setLoading(false);
+        return;
+      }
+
       const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           emailRedirectTo: window.location.origin,
-          data: { name, college_id: collegeId },
+          data: { name, college_id: collegeId, club_id: clubId },
         },
       });
       if (error) throw error;
 
-      // Update profile with club_id after signup trigger creates the profile
-      // This will be done after email verification
       toast({
         title: "Registration successful!",
         description: "Please check your email to verify your account.",
@@ -61,8 +91,8 @@ const Register: React.FC = () => {
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">Member Registration</CardTitle>
-          <CardDescription>Create your account to get started</CardDescription>
+          <CardTitle className="text-2xl font-bold">CampusLog Registration</CardTitle>
+          <CardDescription>Create your member account</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleRegister} className="space-y-4">
@@ -80,7 +110,7 @@ const Register: React.FC = () => {
             </div>
             <div className="space-y-2">
               <Label htmlFor="club">Select Club</Label>
-              <Select value={clubId} onValueChange={setClubId}>
+              <Select value={clubId} onValueChange={setClubId} required>
                 <SelectTrigger>
                   <SelectValue placeholder="Choose a club" />
                 </SelectTrigger>

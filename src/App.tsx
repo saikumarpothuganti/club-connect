@@ -6,8 +6,11 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import DashboardLayout from "@/components/DashboardLayout";
+import Index from "@/pages/Index";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
+import FingerprintVerify from "@/pages/FingerprintVerify";
+import FingerprintRegister from "@/pages/FingerprintRegister";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import ClubAttendanceView from "@/pages/admin/ClubAttendanceView";
 import AdminAccounts from "@/pages/admin/AdminAccounts";
@@ -23,15 +26,6 @@ import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const HomeRedirect = () => {
-  const { user, roles, loading } = useAuth();
-  if (loading) return <div className="flex min-h-screen items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" /></div>;
-  if (!user) return <Navigate to="/login" replace />;
-  if (roles.includes("super_admin")) return <Navigate to="/admin" replace />;
-  if (roles.includes("club_admin")) return <Navigate to="/club-admin" replace />;
-  return <Navigate to="/member" replace />;
-};
-
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -40,9 +34,11 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            <Route path="/" element={<HomeRedirect />} />
+            <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/fingerprint-verify" element={<FingerprintVerify />} />
+            <Route path="/fingerprint-register" element={<FingerprintRegister />} />
 
             {/* Super Admin Routes */}
             <Route path="/admin" element={<ProtectedRoute requiredRole="super_admin"><DashboardLayout><AdminDashboard /></DashboardLayout></ProtectedRoute>} />
