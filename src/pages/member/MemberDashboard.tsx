@@ -6,6 +6,7 @@ import { useGpsTracking } from "@/hooks/useGpsTracking";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { differenceInMinutes, format } from "date-fns";
 import { MapPin, Clock, CalendarDays } from "lucide-react";
+import { formatTime } from "@/lib/formatTime";
 
 const MemberDashboard: React.FC = () => {
   const { user, profile } = useAuth();
@@ -105,7 +106,7 @@ const MemberDashboard: React.FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">{(todayMinutes / 60).toFixed(1)}h</p>
+            <p className="text-2xl font-bold">{formatTime(todayMinutes)}</p>
             <p className="text-xs text-muted-foreground">{todaySessions?.length || 0} sessions</p>
           </CardContent>
         </Card>
@@ -116,7 +117,7 @@ const MemberDashboard: React.FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">{(totalMinutes / 60).toFixed(1)}h</p>
+            <p className="text-2xl font-bold">{formatTime(totalMinutes)}</p>
           </CardContent>
         </Card>
         <Card>

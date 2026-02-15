@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,8 @@ import { Shield, Users, User } from "lucide-react";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const defaultTab = searchParams.get("tab") || "member";
   const [loading, setLoading] = useState(false);
 
   // Super Admin state
@@ -52,19 +54,9 @@ const Login: React.FC = () => {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
 
-      // Fetch roles to redirect
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("No user");
-      
-      const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", user.id);
-      const roleList = roles?.map(r => r.role) || [];
-      
-      if (roleList.includes("club_admin")) {
-        navigate("/club-admin");
-      } else {
-        navigate("/member");
-      }
-      toast({ title: "Logged in successfully!" });
+      // Redirect to fingerprint verification (separate page)
+      toast({ title: "Credentials verified. Please verify your identity." });
+      navigate("/fingerprint-verify");
     } catch (err: any) {
       toast({ title: "Login Failed", description: err.message, variant: "destructive" });
     } finally {
@@ -76,11 +68,11 @@ const Login: React.FC = () => {
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">Club Attendance System</CardTitle>
+          <CardTitle className="text-2xl font-bold">CampusLog</CardTitle>
           <CardDescription>Sign in to your account</CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="member" className="w-full">
+          <Tabs defaultValue={defaultTab} className="w-full">
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="member" className="gap-1">
                 <User className="h-3 w-3" /> Member

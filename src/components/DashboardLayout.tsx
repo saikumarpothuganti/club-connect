@@ -51,7 +51,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
       isMobile && !sidebarOpen && "-translate-x-full"
     )}>
       <div className="p-4 border-b border-sidebar-border">
-        <h2 className="font-bold text-lg text-sidebar-foreground">Club Attendance</h2>
+        <h2 className="font-bold text-lg text-sidebar-foreground">CampusLog</h2>
         <p className="text-xs text-sidebar-foreground/60">{roleName}</p>
       </div>
       <nav className="flex-1 p-3 space-y-1">
@@ -101,7 +101,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
             <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(true)}>
               <Menu className="h-5 w-5" />
             </Button>
-            <h1 className="font-semibold text-foreground">Club Attendance</h1>
+            <h1 className="font-semibold text-foreground">CampusLog</h1>
           </header>
         )}
         <main className="p-4 md:p-6 lg:p-8">{children}</main>

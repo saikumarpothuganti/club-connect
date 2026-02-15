@@ -6,7 +6,7 @@ const corsHeaders = {
 };
 
 const SUPER_ADMIN_COLLEGE_ID = "superadminklu";
-const SUPER_ADMIN_PASSWORD = "superadmin@123@321";
+const SUPER_ADMIN_PASSWORD = "superadmin@321@123";
 const SUPER_ADMIN_EMAIL = "superadmin@clubsystem.internal";
 
 Deno.serve(async (req) => {
